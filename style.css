@@ -1,0 +1,26 @@
+h1,
+p {
+  font-family: Lato;
+}
+
+.container {
+  width: 900px;
+  height: 1000px;
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+table {
+  margin-bottom: 20px;
+  width: 450px;
+  flex: 1 1 auto;
+}
+
+th {
+  font-weight: 900;
+}
+
+tr td {
+  padding-left: 30px;
+}
