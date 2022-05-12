@@ -35,8 +35,8 @@ const genBody = (data) => {
     }
     // item[BUILDING] = item['楼号'];
     if (!item[HIGHLIGHT_KEY]) {
-      item[HIGHLIGHT_KEY] = `${item[BUILDING]}-${item[ROOM] || '000'}`;
-      item['sort'] = Number(`${item[BUILDING]}${item[ROOM] || '000'}`);
+      item[HIGHLIGHT_KEY] = `${item[BUILDING]}-${item[ROOM] || '0'}`;
+      // item['sort'] = Number(`${item[BUILDING]}${item[ROOM] || '000'}`);
     }
 
     delete item['取货码'];
@@ -180,7 +180,7 @@ class ExcelToJson extends React.Component {
             this.readFile();
           }}
         >
-          Read File
+          生成
         </button>
         <div className="container">
           {/* <div style={{ width: '40%', float: 'left' }}>

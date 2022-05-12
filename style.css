@@ -21,6 +21,10 @@ th {
   font-weight: 900;
 }
 
+tr:nth-child(even) {
+  background-color: white;
+}
+
 tr td {
   padding-left: 30px;
 }
