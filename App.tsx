@@ -22,7 +22,7 @@ const convertToJson = (lines) => {
 };
 const genBody = (data) => {
   if (!data) return;
-  const buildingSum = data['订单商品详细'] || data['楼道统计'];
+  const buildingSum = data['订单商品详细'] || data['楼栋统计'];
 
   // const d = [...buildingSum, ...data['5-11送货单']].filter(
   //   (item) => item['用户名'] !== '总计'
