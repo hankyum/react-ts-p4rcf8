@@ -231,14 +231,15 @@ class ExcelToJson extends React.Component {
             }}
             onClick={() => {
               htmlToImage
-                .toPng(this.refs.res, {
+                .toSvg(this.refs.res, {
                   height: document.body.scrollHeight,
                   cacheBust: true,
                   skipAutoScale: true,
                 })
                 .then((dataUrl) => {
                   const link = document.createElement('a');
-                  link.download = 'my-image-name.png';
+                  link.download =
+                    this.state.file.name.replace(/\..*/gi, '') + '.svg';
                   link.href = dataUrl;
                   link.click();
                 })
