@@ -167,8 +167,21 @@ class ExcelToJson extends React.Component {
     var file = e.target.files[0];
     console.log(file);
     this.setState({ file, data: null });
-
-    console.log(this.state.file);
+    var reader = new FileReader();
+    reader.onload = (e) => {
+      var data = e.target.result;
+      const workbook = XLSX.read(data, { type: 'binary' });
+      const result = {};
+      workbook.SheetNames.forEach((sheetName) => {
+        var roa = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
+          header: 1,
+        });
+        if (roa.length) result[sheetName] = convertToJson(roa);
+      });
+      // see the result, caution: it works after reader event is done.
+      this.setState({ data: result, file });
+    };
+    reader.readAsArrayBuffer(file);
   }
 
   tabName(e) {
@@ -215,15 +228,6 @@ class ExcelToJson extends React.Component {
           ref="fileUploader"
           onChange={this.filePathset.bind(this)}
         />
-        {this.state.file && (
-          <button
-            onClick={() => {
-              this.readFile();
-            }}
-          >
-            读取
-          </button>
-        )}
         {this.state.data && (
           <button
             style={{
