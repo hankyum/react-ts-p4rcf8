@@ -4,9 +4,8 @@ import * as _ from 'underscore';
 import * as XLSX from 'xlsx';
 import * as htmlToImage from 'html-to-image';
 
-const BUILDING = '楼栋';
 const ROOM = '房间';
-const HIGHLIGHT_KEY = '楼-室';
+const HIGHLIGHT_KEY = '楼栋';
 const NONE_GOODS = ['取货码', '分拣编号', '商品总数'];
 const convertToJson = (lines) => {
   var result = [];
@@ -23,9 +22,7 @@ const convertToJson = (lines) => {
 };
 const genBody = (data, tabName) => {
   if (!data) return;
-  const buildingSum = tabName
-    ? data[tabName]
-    : data['订单商品详细'] || data['楼栋统计'];
+  const buildingSum = data[tabName];
 
   // const d = [...buildingSum, ...data['5-11送货单']].filter(
   //   (item) => item['用户名'] !== '总计'
@@ -41,7 +38,9 @@ const genBody = (data, tabName) => {
       }
       // item[BUILDING] = item['楼号'];
       if (!item[HIGHLIGHT_KEY]) {
-        item[HIGHLIGHT_KEY] = `${item[BUILDING]}-${item[ROOM] || '0'}`;
+        // item[HIGHLIGHT_KEY] = `${item[BUILDING]}${item[ROOM] ? '-' : ''}${
+        //   item[ROOM] ? item[ROOM] : ''
+        // }`;
         // item['sort'] = Number(`${item[BUILDING]}${item[ROOM] || '000'}`);
       }
 
@@ -113,8 +112,7 @@ const genBody = (data, tabName) => {
     return (
       <table
         style={{
-          background:
-            colors[Number(item[HIGHLIGHT_KEY].split('-')[0]) % colors.length],
+          background: colors[Number(item[HIGHLIGHT_KEY]) % colors.length],
         }}
       >
         {/* {item[BUILDING] && (
