@@ -2,6 +2,7 @@ import * as React from 'react';
 import './style.css';
 import * as _ from 'underscore';
 import * as XLSX from 'xlsx';
+import * as htmlToImage from 'html-to-image';
 
 const BUILDING = '楼栋';
 const ROOM = '房间';
@@ -127,6 +128,23 @@ const genBody = (data, tabName) => {
     );
   });
 };
+// const resDiv = React.useRef(null);
+// const onButtonClick = React.useCallback(() => {
+//   if (resDiv.current === null) {
+//     return;
+//   }
+//   htmlToImage
+//     .toPng(resDiv.current, { cacheBust: true })
+//     .then((dataUrl) => {
+//       const link = document.createElement('a');
+//       link.download = 'my-image-name.png';
+//       link.href = dataUrl;
+//       link.click();
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//     });
+// }, [resDiv]);
 
 class ExcelToJson extends React.Component {
   constructor(props) {
@@ -206,38 +224,33 @@ class ExcelToJson extends React.Component {
             读取
           </button>
         )}
-        {this.state.data && false && (
+        {this.state.data && (
           <button
+            style={{
+              position: 'fixed',
+            }}
             onClick={() => {
-              // html2pdf()
-              //   .set({
-              //     margin: 1,
-              //     filename: this.state.file.name.split('.')[0] + '.pdf',
-              //     image: { type: 'jpeg', quality: 0.98 },
-              //     html2canvas: { scale: 2 },
-              //     jsPDF: {
-              //       unit: 'in',
-              //       format: 'letter',
-              //       orientation: 'portrait',
-              //     },
-              //     pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
-              //   })
-              //   .from(document.getElementById('elementRes'))
-              //   .save();
-              // htmlPdf
-              //   .generatePdf(
-              //     { content: document.getElementById('elementRes').innerHTML },
-              //     { format: 'A4' }
-              //   )
-              //   .then((pdfBuffer) => {
-              //     console.log('PDF Buffer:-', pdfBuffer);
-              //   });
+              htmlToImage
+                .toPng(this.refs.res, {
+                  height: document.body.scrollHeight,
+                  cacheBust: true,
+                  skipAutoScale: true,
+                })
+                .then((dataUrl) => {
+                  const link = document.createElement('a');
+                  link.download = 'my-image-name.png';
+                  link.href = dataUrl;
+                  link.click();
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
             }}
           >
             下载
           </button>
         )}
-        <div id="elementRes" className="container">
+        <div ref={(ref) => (this.refs.res = ref)} className="container">
           {/* <div style={{ width: '40%', float: 'left' }}>
         {totalTable.slice(0, data.length / 2)}
       </div>

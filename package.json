@@ -14,7 +14,7 @@
     "timers": "0.1.1",
     "underscore": "1.13.3",
     "xlsx": "latest",
-    "html-pdf-node": "latest"
+    "html-to-image": "latest"
   },
   "scripts": {
     "start": "react-scripts-ts start",
