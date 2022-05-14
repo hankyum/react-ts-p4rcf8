@@ -29,23 +29,26 @@ const genBody = (data, tabName) => {
   // const d = [...buildingSum, ...data['5-11送货单']].filter(
   //   (item) => item['用户名'] !== '总计'
   // );
-  const d = buildingSum.map((item) => {
-    for (let p in item) {
-      if (!item[p]) {
-        delete item[p];
+  if (!buildingSum) return <div>Not data found</div>;
+  const d =
+    buildingSum &&
+    buildingSum.map((item) => {
+      for (let p in item) {
+        if (!item[p]) {
+          delete item[p];
+        }
       }
-    }
-    // item[BUILDING] = item['楼号'];
-    if (!item[HIGHLIGHT_KEY]) {
-      item[HIGHLIGHT_KEY] = `${item[BUILDING]}-${item[ROOM] || '0'}`;
-      // item['sort'] = Number(`${item[BUILDING]}${item[ROOM] || '000'}`);
-    }
+      // item[BUILDING] = item['楼号'];
+      if (!item[HIGHLIGHT_KEY]) {
+        item[HIGHLIGHT_KEY] = `${item[BUILDING]}-${item[ROOM] || '0'}`;
+        // item['sort'] = Number(`${item[BUILDING]}${item[ROOM] || '000'}`);
+      }
 
-    delete item['取货码'];
-    // delete item['分拣编号'];
-    // delete item['商品总数'];
-    return item;
-  });
+      delete item['取货码'];
+      // delete item['分拣编号'];
+      // delete item['商品总数'];
+      return item;
+    });
   // .sort((a, b) => {
   //   if (a[BUILDING] == '总计') return 1;
   //   return a['sort'] > b['sort'] ? 1 : -1;
@@ -132,6 +135,7 @@ class ExcelToJson extends React.Component {
     this.state = {
       file: '',
       tabName: '楼栋统计',
+      updateTab: false,
     };
   }
 
@@ -144,7 +148,7 @@ class ExcelToJson extends React.Component {
     e.preventDefault();
     var file = e.target.files[0];
     console.log(file);
-    this.setState({ file });
+    this.setState({ file, data: null });
 
     console.log(this.state.file);
   }
@@ -152,10 +156,11 @@ class ExcelToJson extends React.Component {
   tabName(e) {
     e.stopPropagation();
     e.preventDefault();
-    this.setState({ tabName: e.target.value });
+    this.setState({ tabName: e.target.value, updateTab: true });
   }
 
   readFile() {
+    if (this.state.data || !this.state.file) return;
     var oFile = this.state.file;
     var reader = new FileReader();
     reader.onload = (e) => {
@@ -192,13 +197,15 @@ class ExcelToJson extends React.Component {
           ref="fileUploader"
           onChange={this.filePathset.bind(this)}
         />
-        <button
-          onClick={() => {
-            this.readFile();
-          }}
-        >
-          生成
-        </button>
+        {this.state.file && (
+          <button
+            onClick={() => {
+              this.readFile();
+            }}
+          >
+            读取
+          </button>
+        )}
         {this.state.data && false && (
           <button
             onClick={() => {
