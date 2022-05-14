@@ -20,9 +20,11 @@ const convertToJson = (lines) => {
   }
   return result;
 };
-const genBody = (data) => {
+const genBody = (data, tabName) => {
   if (!data) return;
-  const buildingSum = data['订单商品详细'] || data['楼栋统计'];
+  const buildingSum = tabName
+    ? data[tabName]
+    : data['订单商品详细'] || data['楼栋统计'];
 
   // const d = [...buildingSum, ...data['5-11送货单']].filter(
   //   (item) => item['用户名'] !== '总计'
@@ -129,6 +131,7 @@ class ExcelToJson extends React.Component {
     this.handleClick = this.handleClick.bind(this);
     this.state = {
       file: '',
+      tabName: '楼栋统计',
     };
   }
 
@@ -144,6 +147,12 @@ class ExcelToJson extends React.Component {
     this.setState({ file });
 
     console.log(this.state.file);
+  }
+
+  tabName(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    this.setState({ tabName: e.target.value });
   }
 
   readFile() {
@@ -169,6 +178,14 @@ class ExcelToJson extends React.Component {
   render() {
     return (
       <div>
+        转换Excel Tab 名称:
+        <input
+          type="text"
+          id="tabName"
+          value={this.state.tabName}
+          ref="tabName"
+          onChange={this.tabName.bind(this)}
+        />
         <input
           type="file"
           id="file"
@@ -182,7 +199,38 @@ class ExcelToJson extends React.Component {
         >
           生成
         </button>
-        <div className="container">
+        {this.state.data && false && (
+          <button
+            onClick={() => {
+              // html2pdf()
+              //   .set({
+              //     margin: 1,
+              //     filename: this.state.file.name.split('.')[0] + '.pdf',
+              //     image: { type: 'jpeg', quality: 0.98 },
+              //     html2canvas: { scale: 2 },
+              //     jsPDF: {
+              //       unit: 'in',
+              //       format: 'letter',
+              //       orientation: 'portrait',
+              //     },
+              //     pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
+              //   })
+              //   .from(document.getElementById('elementRes'))
+              //   .save();
+              // htmlPdf
+              //   .generatePdf(
+              //     { content: document.getElementById('elementRes').innerHTML },
+              //     { format: 'A4' }
+              //   )
+              //   .then((pdfBuffer) => {
+              //     console.log('PDF Buffer:-', pdfBuffer);
+              //   });
+            }}
+          >
+            下载
+          </button>
+        )}
+        <div id="elementRes" className="container">
           {/* <div style={{ width: '40%', float: 'left' }}>
         {totalTable.slice(0, data.length / 2)}
       </div>
@@ -190,7 +238,7 @@ class ExcelToJson extends React.Component {
         {totalTable.slice(data.length / 2, data.length)}
       </div> */}
           {/* {JSON.stringify(this.state.data, null, 4)} */}
-          {genBody(this.state.data)}
+          {genBody(this.state.data, this.state.tabName)}
         </div>
       </div>
     );

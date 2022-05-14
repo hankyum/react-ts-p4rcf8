@@ -13,7 +13,8 @@
     "react-dom": "18.1.0",
     "timers": "0.1.1",
     "underscore": "1.13.3",
-    "xlsx": "latest"
+    "xlsx": "latest",
+    "html-pdf-node": "latest"
   },
   "scripts": {
     "start": "react-scripts-ts start",
