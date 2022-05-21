@@ -4,8 +4,7 @@ import * as _ from 'underscore';
 import * as XLSX from 'xlsx';
 import * as htmlToImage from 'html-to-image';
 
-const ROOM = '房间';
-const HIGHLIGHT_KEY = '楼栋';
+const HIGHLIGHT_KEY = '取货码';
 const NONE_GOODS = ['取货码', '分拣编号', '商品总数'];
 const convertToJson = (lines) => {
   var result = [];
@@ -14,15 +13,27 @@ const convertToJson = (lines) => {
     var obj = {};
     var currentline = lines[i];
     for (var j = 0; j < headers.length; j++) {
-      obj[headers[j]] = currentline[j];
+      obj[headers[j].trim()] = currentline[j];
     }
     result.push(obj);
   }
   return result;
 };
+
+const isBuildingKey = (key) => String(key).match(/楼.+[室栋]?/gi);
+
+const getBuildingNo = (item) => {
+  return Number(
+    String(item[Object.keys(item).find(isBuildingKey) || HIGHLIGHT_KEY]).split(
+      /\D+/
+    )[0]
+  );
+};
+
 const genBody = (data, tabName) => {
   if (!data) return;
-  const buildingSum = data[tabName];
+  const buildingSum =
+    data[Object.keys(data).length === 1 ? Object.keys(data)[0] : tabName];
 
   // const d = [...buildingSum, ...data['5-11送货单']].filter(
   //   (item) => item['用户名'] !== '总计'
@@ -30,25 +41,27 @@ const genBody = (data, tabName) => {
   if (!buildingSum) return <div>Not data found</div>;
   const d =
     buildingSum &&
-    buildingSum.map((item) => {
-      for (let p in item) {
-        if (!item[p]) {
-          delete item[p];
+    buildingSum
+      .map((item) => {
+        for (let p in item) {
+          if (!item[p]) {
+            delete item[p];
+          }
         }
-      }
-      // item[BUILDING] = item['楼号'];
-      if (!item[HIGHLIGHT_KEY]) {
-        // item[HIGHLIGHT_KEY] = `${item[BUILDING]}${item[ROOM] ? '-' : ''}${
-        //   item[ROOM] ? item[ROOM] : ''
-        // }`;
-        // item['sort'] = Number(`${item[BUILDING]}${item[ROOM] || '000'}`);
-      }
+        // item[BUILDING] = item['楼号'];
+        if (!item[HIGHLIGHT_KEY]) {
+          // item[HIGHLIGHT_KEY] = `${item[BUILDING]}${item[ROOM] ? '-' : ''}${
+          //   item[ROOM] ? item[ROOM] : ''
+          // }`;
+          // item['sort'] = Number(`${item[BUILDING]}${item[ROOM] || '000'}`);
+        }
 
-      delete item['取货码'];
-      // delete item['分拣编号'];
-      // delete item['商品总数'];
-      return item;
-    });
+        // delete item['取货码'];
+        // delete item['分拣编号'];
+        // delete item['商品总数'];
+        return item;
+      })
+      .filter((item) => getBuildingNo(item));
   // .sort((a, b) => {
   //   if (a[BUILDING] == '总计') return 1;
   //   return a['sort'] > b['sort'] ? 1 : -1;
@@ -58,7 +71,7 @@ const genBody = (data, tabName) => {
   //   return item;
   // });
 
-  const colors = ['#56E8E2', '#50BF8D', '#ABFF82', 'yellow', '#56B3E8'];
+  const colors = ['#56E8E2', '#50BF8D', '#ABFF82', 'yellow'];
 
   // const g = _.groupBy(d, (d) => d[HIGHLIGHT_KEY].split('-')[0]);
 
@@ -66,11 +79,7 @@ const genBody = (data, tabName) => {
     const ary = [];
     _.pairs(item)
       .sort(([key]) => {
-        return (
-          (key === HIGHLIGHT_KEY ||
-            (key.includes('楼') && key.includes('室'))) &&
-          -1
-        );
+        return (key === HIGHLIGHT_KEY || isBuildingKey(key)) && -1;
       })
       .map(([key, value]) => {
         // key !== BUILDING &&
@@ -112,7 +121,7 @@ const genBody = (data, tabName) => {
     return (
       <table
         style={{
-          background: colors[Number(item[HIGHLIGHT_KEY]) % colors.length],
+          background: colors[getBuildingNo(item) % colors.length],
         }}
       >
         {/* {item[BUILDING] && (
