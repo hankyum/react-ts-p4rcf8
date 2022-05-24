@@ -20,7 +20,12 @@ const convertToJson = (lines) => {
   return result;
 };
 
-const isBuildingKey = (key) => String(key).match(/楼.+[室栋]?/gi);
+let colorCol = '楼栋室';
+
+const isBuildingKey = (key) =>
+  key === '楼栋' ||
+  key === '楼-室' ||
+  String(key).match(new RegExp(`/[${colorCol && colorCol.trim()}]+/gi`));
 
 const getBuildingNo = (item) => {
   return Number(
@@ -160,6 +165,7 @@ class ExcelToJson extends React.Component {
     this.state = {
       file: '',
       tabName: '楼栋统计',
+      colorCol,
       updateTab: false,
     };
   }
@@ -197,6 +203,13 @@ class ExcelToJson extends React.Component {
     this.setState({ tabName: e.target.value, updateTab: true });
   }
 
+  colorCol(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    colorCol = e.target.value;
+    this.setState({ colorCol: e.target.value, updateTab: true });
+  }
+
   readFile() {
     if (this.state.data || !this.state.file) return;
     var oFile = this.state.file;
@@ -228,6 +241,14 @@ class ExcelToJson extends React.Component {
           value={this.state.tabName}
           ref="tabName"
           onChange={this.tabName.bind(this)}
+        />
+        着色排序列名:
+        <input
+          type="text"
+          id="colorCol"
+          value={this.state.colorCol}
+          ref="colorCol"
+          onChange={this.colorCol.bind(this)}
         />
         <input
           type="file"
