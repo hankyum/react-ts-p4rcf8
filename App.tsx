@@ -25,6 +25,7 @@ let colorCol = '楼栋室';
 const isBuildingKey = (key) =>
   key === '楼栋' ||
   key === '楼-室' ||
+  key === colorCol ||
   String(key).match(new RegExp(`/[${colorCol && colorCol.trim()}]+/gi`));
 
 const getBuildingNo = (item) => {
