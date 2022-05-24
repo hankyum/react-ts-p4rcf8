@@ -91,7 +91,20 @@ const genBody = (data, tabName) => {
         // key !== BUILDING &&
         ary.push(
           <tr
-            onClick={(e) => (e.target.parentElement.style.background = 'gray')}
+            onClick={(e) => {
+              const row = e.target.parentElement;
+              const color = row.style.background;
+              const checkedColor = 'gray';
+              row.style.background = color !== checkedColor ? checkedColor : '';
+              if (
+                _.all(
+                  row.parentElement.childNodes,
+                  (item) => item.style.background === checkedColor
+                )
+              ) {
+                row.parentElement.style.background = checkedColor;
+              }
+            }}
           >
             <td
               style={{
@@ -128,6 +141,7 @@ const genBody = (data, tabName) => {
   return d.map((item) => {
     return (
       <table
+        id={item[colorCol]}
         style={{
           background: colors[getBuildingNo(item) % colors.length],
         }}
@@ -292,6 +306,19 @@ class ExcelToJson extends React.Component {
             下载
           </button>
         )}
+        {/* {this.state.data && (
+          <button
+            style={{
+              marginLeft: 50,
+              position: 'fixed',
+            }}
+            onClick={() =>
+              this.setState({ changeId: new Date().getMilliseconds() })
+            }
+          >
+            刷新
+          </button>
+        )} */}
         {this.state.data && (
           <div
             id={this.state.changeId}
