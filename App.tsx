@@ -166,7 +166,7 @@ class ExcelToJson extends React.Component {
       file: '',
       tabName: '楼栋统计',
       colorCol,
-      updateTab: false,
+      changeId: new Date().getMilliseconds(),
     };
   }
 
@@ -200,14 +200,20 @@ class ExcelToJson extends React.Component {
   tabName(e) {
     e.stopPropagation();
     e.preventDefault();
-    this.setState({ tabName: e.target.value, updateTab: true });
+    this.setState({
+      tabName: e.target.value,
+      changeId: new Date().getMilliseconds(),
+    });
   }
 
   colorCol(e) {
     e.stopPropagation();
     e.preventDefault();
     colorCol = e.target.value;
-    this.setState({ colorCol: e.target.value, updateTab: true });
+    this.setState({
+      colorCol: e.target.value,
+      changeId: new Date().getMilliseconds(),
+    });
   }
 
   readFile() {
@@ -283,7 +289,11 @@ class ExcelToJson extends React.Component {
             下载
           </button>
         )}
-        <div ref={(ref) => (this.refs.res = ref)} className="container">
+        <div
+          id={this.state.changeId}
+          ref={(ref) => (this.refs.res = ref)}
+          className="container"
+        >
           {/* <div style={{ width: '40%', float: 'left' }}>
         {totalTable.slice(0, data.length / 2)}
       </div>
