@@ -90,7 +90,9 @@ const genBody = (data, tabName) => {
       .map(([key, value]) => {
         // key !== BUILDING &&
         ary.push(
-          <tr>
+          <tr
+            onClick={(e) => (e.target.parentElement.style.background = 'gray')}
+          >
             <td
               style={{
                 color:
@@ -290,20 +292,25 @@ class ExcelToJson extends React.Component {
             下载
           </button>
         )}
-        <div
-          id={this.state.changeId}
-          ref={(ref) => (this.refs.res = ref)}
-          className="container"
-        >
-          {/* <div style={{ width: '40%', float: 'left' }}>
+        {this.state.data && (
+          <div
+            id={this.state.changeId}
+            ref={(ref) => (this.refs.res = ref)}
+            className="container"
+          >
+            <p>
+              可打开 svg 图片在浏览器另存为PDF查看，如有问题推荐使用Chrome浏览
+            </p>
+            {/* <div style={{ width: '40%', float: 'left' }}>
         {totalTable.slice(0, data.length / 2)}
       </div>
       <div style={{ width: '40%', float: 'right', marginLeft: '10%' }}>
         {totalTable.slice(data.length / 2, data.length)}
       </div> */}
-          {/* {JSON.stringify(this.state.data, null, 4)} */}
-          {genBody(this.state.data, this.state.tabName)}
-        </div>
+            {/* {JSON.stringify(this.state.data, null, 4)} */}
+            {genBody(this.state.data, this.state.tabName)}
+          </div>
+        )}
       </div>
     );
   }
